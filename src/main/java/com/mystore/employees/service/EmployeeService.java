@@ -53,21 +53,18 @@ public class EmployeeService {
         // Validate first name
         String firstName = employee.getEmployeeFirstName();
         if (!isValidName(firstName)) {
-            System.out.println("First name is not valid.");
             return 400;
         }
 
         // Validate last name
         String lastName = employee.getEmployeeLastName();
         if (!isValidName(lastName)) {
-            System.out.println("Last name is not valid.");
             return 400;
         }
 
         // Validate project name
         String projectName = employee.getEmployeeProject();
         if (!isValidProjectName(projectName)) {
-            System.out.println("Project name is not valid.");
             return 400;
         }
 
@@ -92,21 +89,18 @@ public class EmployeeService {
         // Validate first name
         String firstName = e.getEmployeeFirstName();
         if (!isValidName(firstName)) {
-            System.out.println("First name is not valid.");
             return 400;
         }
 
         // Validate last name
         String lastName = e.getEmployeeLastName();
         if (!isValidName(lastName)) {
-            System.out.println("Last name is not valid.");
             return 400;
         }
 
         // Validate project name
         String projectName = e.getEmployeeProject();
         if (!isValidProjectName(projectName)) {
-            System.out.println("Project name is not valid.");
             return 400;
         }
         String id = e.getEmployeeId();
