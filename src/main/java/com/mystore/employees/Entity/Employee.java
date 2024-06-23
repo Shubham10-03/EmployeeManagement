@@ -1,18 +1,38 @@
 package com.mystore.employees.Entity;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+
+@Entity
 public class Employee {
+
+    @Id
+    private String employeeId;
     private String employeeFirstName;
     private String employeeLastName;
-    private String employeeId;
     private String employeeAge;
     private String employeeProject;
 
-    public Employee(String employeeFirstName, String employeeLastName, String employeeId, String employeeAge, String employeeProject) {
+    // Default constructor
+    public Employee() {
+    }
+
+    // Parameterized constructor
+    public Employee(String employeeId, String employeeFirstName, String employeeLastName, String employeeAge, String employeeProject) {
+        this.employeeId = employeeId;
         this.employeeFirstName = employeeFirstName;
         this.employeeLastName = employeeLastName;
-        this.employeeId = employeeId;
         this.employeeAge = employeeAge;
         this.employeeProject = employeeProject;
+    }
+
+    // Getters and setters
+    public String getEmployeeId() {
+        return employeeId;
+    }
+
+    public void setEmployeeId(String employeeId) {
+        this.employeeId = employeeId;
     }
 
     public String getEmployeeFirstName() {
@@ -29,14 +49,6 @@ public class Employee {
 
     public void setEmployeeLastName(String employeeLastName) {
         this.employeeLastName = employeeLastName;
-    }
-
-    public String getEmployeeId() {
-        return employeeId;
-    }
-
-    public void setEmployeeId(String employeeId) {
-        this.employeeId = employeeId;
     }
 
     public String getEmployeeAge() {

@@ -1,48 +1,68 @@
 package com.mystore.employees.service;
 
 import com.mystore.employees.Entity.Employee;
+import com.mystore.employees.database.operations.EmployeeDatabaseActions;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
 
 import static java.lang.Integer.parseInt;
 
 @Service
-public class EmployeeService {
+public class EmployeeService extends RuntimeException{
     List<Employee> employees = new ArrayList<>(Arrays.asList(
-            new Employee("Shubham", "Kumar", "92251", "25", "IAG"),
-            new Employee("Shivam", "Kumar", "92252", "25", "CAG"),
-            new Employee("Vishnu", "Vinoj", "92253", "25", "Iberia"),
-            new Employee("Varun", "Singh", "92254", "25", "HCI")
+            new Employee("92251", "Shubham", "Kumar",  "25", "IAG"),
+            new Employee("92252", "Shivam", "Kumar",  "25", "CAG"),
+            new Employee("92253", "Vishnu", "Vinoj",  "25", "Iberia"),
+            new Employee("92254", "Varun", "Singh",  "25", "HCI")
     ));
+
+    @Autowired
+    EmployeeDatabaseActions employeeDatabase;
+
     public List<Employee> getAllEmployees() {
-        return employees;
+        return employeeDatabase.findAll();
     }
-    public Employee getEmployeeDetails(String id) {
-        Employee emp = null;
-        for(Employee employee : employees){
-            if (employee.getEmployeeId().equals(id)){
-                emp = employee;
-            }
+
+    public Employee getEmployeeDetails(String id)  throws NullPointerException{
+        List<Employee> employees  = employeeDatabase.findAll();
+        for (Employee employee : employees) {
+            if (employee.getEmployeeId().equals(id))
+                return employee;
         }
-        return emp;
+        return null;
     }
 
     public boolean findEmployee (String employeeId){
-        for (Employee employee : employees){
-            if (employee.getEmployeeId().equals(employeeId))
-                return true;
-        }
-        return false;
+          List<Employee> employees  = employeeDatabase.findAll();
+          for (Employee employee : employees) {
+              if (employee.getEmployeeId().equals(employeeId))
+                  return true;
+          }
+          return false;
+    }
+
+    public void logMessage(String message) {
+        LocalDateTime now = LocalDateTime.now();
+        ZoneId istZoneId = ZoneId.of("Asia/Kolkata");
+        ZonedDateTime istZonedDateTime = now.atZone(istZoneId);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+        String formattedDate = istZonedDateTime.format(formatter);
+        System.out.println(formattedDate + " " + message);
     }
 
     public int createEmployee(Employee employee) {
         String empId = employee.getEmployeeId();
         if (empId.length() > 6){
+            logMessage("Employee ID is not in expected format");
             return 400;
         }
         int emplId = parseInt(empId);
@@ -69,7 +89,8 @@ public class EmployeeService {
         }
 
         // If all validations pass, add employee to the collection
-        employees.add(employee);
+        //employees.add(employee);
+        employeeDatabase.save(employee);
         return 201; // Successful creation
     }
 
@@ -105,19 +126,16 @@ public class EmployeeService {
         }
         String id = e.getEmployeeId();
         e.setEmployeeProject(projectName.toUpperCase());
-        for(Employee employee : employees){
-            if (employee.getEmployeeId().equals(id)){
-                employees.remove(employee);
-                employees.add(e);
-                return 202;
-            }
+        if (findEmployee(id)) {
+            employeeDatabase.save(e);
+            return 202;
         }
         return  404;
     }
 
     public int removeEmployee (Employee employee){
         if(findEmployee(employee.getEmployeeId())){
-            employees.remove(employee);
+            employeeDatabase.delete(employee);
             return 204;
         }
         return 404;
